@@ -667,6 +667,10 @@ stream {
             {{ if (or $location.Rewrite.ForceSSLRedirect (and (not (empty $server.SSLCertificate)) $location.Rewrite.SSLRedirect)) }}
             # enforce ssl on server side
             if ($pass_access_scheme = http) {
+                {{ if $all.Cfg.HSTS }}
+                # HSTS is ignored by the browser when site is accessed using HTTP
+                more_clear_headers "Strict-Transport-Security";
+                {{ end }}
                 return 301 https://$best_http_host$request_uri;
             }
             {{ end }}
